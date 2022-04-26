@@ -31,6 +31,7 @@ import FlatListSample from './src/ComponentSample/FlatListSample';
 import Supplier from './src/NavigationSample/Supplier';
 import SupplierDetail from './src/NavigationSample/SupplierDetail';
 import MainTab from './src/navigations/tab/MainTab';
+import {CartProvider} from './src/store/CartContext';
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
 
@@ -39,9 +40,11 @@ const App = () => {
   };
   const Stack = createNativeStackNavigator();
   return (
-    <NavigationContainer>
-      <MainTab></MainTab>
-    </NavigationContainer>
+    <>
+      <CartProvider>
+        <MainTab></MainTab>
+      </CartProvider>
+    </>
   );
 };
 
