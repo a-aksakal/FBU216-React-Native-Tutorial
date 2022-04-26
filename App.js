@@ -6,6 +6,8 @@
  * @flow strict-local
  */
 
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import React from 'react';
 import {
   SafeAreaView,
@@ -26,19 +28,20 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 import ComponentSample from './src/ComponentSample/ComponentSample';
 import FlatListSample from './src/ComponentSample/FlatListSample';
-
+import Supplier from './src/NavigationSample/Supplier';
+import SupplierDetail from './src/NavigationSample/SupplierDetail';
+import MainTab from './src/navigations/tab/MainTab';
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
-
+  const Stack = createNativeStackNavigator();
   return (
-    <SafeAreaView>
-      {/* <ComponentSample /> */}
-      <FlatListSample></FlatListSample>
-    </SafeAreaView>
+    <NavigationContainer>
+      <MainTab></MainTab>
+    </NavigationContainer>
   );
 };
 
