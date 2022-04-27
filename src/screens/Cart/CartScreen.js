@@ -7,14 +7,30 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from 'react-native';
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import CartContext from '../../store/CartContext';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import NumericInput from 'react-native-numeric-input';
 const CartScreen = () => {
-  const {cart, setCart} = useContext(CartContext);
+  const {cart, setCart, totalPrice, setTotalPrice} = useContext(CartContext);
 
+  const DeleteCart = item => {
+    if (cart.length == 1) {
+      setTotalPrice(0);
+    }
+    var index = cart.indexOf(item);
+    cart.splice(index, 1);
+    setCart([...cart]);
+  };
+  function ChangeQuantity(item, value) {
+    var findedProduct = cart.find(x => x.id == item.id);
+    findedProduct.quantity = value;
+    setCart([...cart]);
+  }
+  var total = 0;
   const renderItem = ({item}) => {
+    total = total + item.quantity * item.price;
+    setTotalPrice(total.toFixed(2));
     return (
       <View style={styles.itemGroup}>
         <View style={styles.itemPhotobox}>
@@ -25,7 +41,9 @@ const CartScreen = () => {
             <Text style={styles.itemContentHeaderTitle}>
               {item.title.substring(0, 20)}
             </Text>
-            <TouchableOpacity style={styles.itemContentHeaderDelete}>
+            <TouchableOpacity
+              style={styles.itemContentHeaderDelete}
+              onPress={() => DeleteCart(item)}>
               <MaterialCommunityIcons
                 name="trash-can-outline"
                 size={26}></MaterialCommunityIcons>
@@ -49,7 +67,10 @@ const CartScreen = () => {
               <NumericInput
                 totalWidth={80}
                 totalHeight={40}
-                onChange={value => console.log(value)}
+                initValue={item.quantity}
+                value={item.quantity}
+                onChange={value => ChangeQuantity(item, value)}
+                minValue={0}
               />
             </View>
             <Text
@@ -66,6 +87,7 @@ const CartScreen = () => {
       </View>
     );
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
@@ -73,7 +95,7 @@ const CartScreen = () => {
         data={cart}
         renderItem={renderItem}></FlatList>
       <View style={styles.cartdetail}>
-        <Text>Sepet Toplamı:</Text>
+        <Text>Sepet Toplamı: {totalPrice}</Text>
       </View>
     </SafeAreaView>
   );
@@ -85,13 +107,13 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   flatlist: {
-    flex: 10,
+    flex: 15,
   },
   cartdetail: {
-    flex: 1,
+    flex: 0.3,
   },
   itemGroup: {
-    flex: 1,
+    flex: 2,
     flexDirection: 'row',
     backgroundColor: '#8a7d7e',
     borderRadius: 10,
@@ -100,6 +122,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingBottom: 10,
     height: 150,
+    marginBottom: 10,
   },
   itemPhotobox: {
     flex: 1,

@@ -32,6 +32,9 @@ import Supplier from './src/NavigationSample/Supplier';
 import SupplierDetail from './src/NavigationSample/SupplierDetail';
 import MainTab from './src/navigations/tab/MainTab';
 import {CartProvider} from './src/store/CartContext';
+import {createStore} from 'redux';
+import {FavReducer} from './src/store/reducer/fav.reducer';
+import {Provider} from 'react-redux';
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
 
@@ -39,11 +42,15 @@ const App = () => {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
   const Stack = createNativeStackNavigator();
+
+  const store = createStore(FavReducer);
   return (
     <>
-      <CartProvider>
-        <MainTab></MainTab>
-      </CartProvider>
+      <Provider store={store}>
+        <CartProvider>
+          <MainTab></MainTab>
+        </CartProvider>
+      </Provider>
     </>
   );
 };

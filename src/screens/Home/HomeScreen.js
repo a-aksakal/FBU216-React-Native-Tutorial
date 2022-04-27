@@ -10,15 +10,19 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import React, {useEffect, useState, useContext} from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import CartContext from '../../store/CartContext';
-const HomeScreen = () => {
+import {AddFav} from '../../store/action/fav.action';
+import {connect} from 'react-redux';
+const HomeScreen = props => {
   const [products, setProducts] = useState([]);
-  const {cart, setCart} = useContext(CartContext);
+  const {cart, setCart, setTotalPrice, totalPrice} = useContext(CartContext);
   useEffect(() => {
     fetch('https://fakestoreapi.com/products?limit=10')
       .then(res => res.json())
       .then(json => setProducts(json));
   }, []);
-
+  const AddToFav = item => {
+    props.onCreate(item);
+  };
   const AddCart = item => {
     var findedProduct = cart.find(x => x.id == item.id);
 
@@ -49,7 +53,9 @@ const HomeScreen = () => {
           <Text style={styles.itemContentPrice}>{item.price.toFixed(2)}₺</Text>
         </View>
         <View style={styles.itemButtons}>
-          <TouchableOpacity style={styles.itemButtonsFav}>
+          <TouchableOpacity
+            style={styles.itemButtonsFav}
+            onPress={() => AddToFav(item)}>
             <MaterialCommunityIcons
               name="cards-heart"
               size={20}></MaterialCommunityIcons>
@@ -89,7 +95,19 @@ const HomeScreen = () => {
     </SafeAreaView>
   );
 };
+const mapStateToProps = state => {
+  return {
+    favorite: state,
+  };
+};
 
+const mapDispatchToProps = dispatch => {
+  return {
+    onCreate: data => {
+      dispatch(AddFav(data));
+    },
+  };
+};
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -186,4 +204,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
